@@ -18,8 +18,11 @@ const authHeader = req.headers.authorization;
         }                       
         if(verifying) { 
             req.user = verifying;
-            next();
-        } else {    
+            if(req.user.isAdmin == false){
+                next();
+            }
+         
+        } else {        
             res.status(401).json({
                 message:"Unauthorized"
             })

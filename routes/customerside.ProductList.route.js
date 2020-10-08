@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const checkAuth  = require("../middleware/checkUser.Middleware");
-const product = require("../controller/Cutomerside.Products.Controller");
+const product = require("../controller/cutomerside.Products.controller");
 router.get("/getallproductsApi",product.getallproducts);
 router.get("/viewProduct",product.viewproductdetail);
 router.post("/addtocart",checkAuth.checuserkAuth,product.addtocart)

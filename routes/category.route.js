@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const cat = require("../controller/Category.Controller");
+const cat = require("../controller/category.controller");
 const checkauth = require("../middleware/checkAdmin.Middleware");
 
 //route api

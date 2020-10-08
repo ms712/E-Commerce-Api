@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 const checkAuth = require("../middleware/checkUser.Middleware");
-const profile = require("../controller/CustomerProfile.Controller");
+const profile = require("../controller/customerProfile.controller");
 const multer = require("multer");
 const storage = multer.diskStorage({
     destination:function(req,file,cb){
