@@ -314,18 +314,18 @@ const displayorder = async (req,res,next)=>{
   try{
     const order =  await Order.aggregate([
         {$unwind:"$product"},
-        {$lookup:{
+        {$lookup:{                                                                                                            
             from:"products",
             let:{prid:"$product.productid",usersid:"$userid"},
             pipeline:[{$match:{$expr:{$and:[
               {$eq:["$$prid","$_id"]},
               {$eq:["$$usersid",id]}
             ]}}}
-            ],
+            ],                                                                                                                            
             as:"productdetails"}},
         {$lookup:{
             from:"addresses",
-            localField:"userid",
+            localField:"userid",                                                                                                                                                                                                                                                                                                                                                                  
             foreignField:"userid",
             as:"myaddress"  
           }},
