@@ -2,6 +2,7 @@ var Promise = require("bluebird");
 Promise.promisifyAll(require("mongoose"))  
 const Product = require("../models/admin.AddProducts.model").Product;
 const mongoose = require("mongoose");
+
 //task 6:create products categoryise
 const addproduct = async (req, res, next) => {
   const { productName, productPrice, color ,productCatid, companyname } = req.body;

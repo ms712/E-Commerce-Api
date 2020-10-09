@@ -1,6 +1,7 @@
 const Category = require("../models/admin.AddProducts.model").Category;
 const mongoose = require("mongoose");
 const { Product } = require("../models/admin.AddProducts.model");
+console.log("do....changes..")
 //1.Create Category:Done
 const createCategory = async (req,res,next)=>{ 
     const catname = req.body.categoryname;

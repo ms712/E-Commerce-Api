@@ -1,4 +1,4 @@
-const { sortedLastIndexOf, sum, reject, result } = require("lodash"); 
+const { sortedLastIndexOf, sum, reject, result, find } = require("lodash"); 
 const mongoose = require("mongoose");
 var Promise = require("bluebird");
 Promise.promisifyAll(require("mongoose"));
@@ -6,7 +6,9 @@ const Order = require("../models/admin.AddProducts.model").Order;
 const Cart = require("../models/admin.AddProducts.model").Cart;
 const Address = require("../models/admin.AddProducts.model").Address;
 const moment =  require("moment");
+
 const Product = require("../models/admin.AddProducts.model").Product;
+
 const getallproducts = async (req,res,next)=>{
   //for pagination
   const pagination = req.body.pagination ? parseInt(req.body.pagination) : 3
@@ -112,84 +114,89 @@ const addtocart = async (req,res,next)=>{
   }
   const filter = {usersid:mongoose.Types.ObjectId(req.user.id)}
   const date = moment().format('LL'); 
-        try {
-          let cart = await Cart.findOne(filter)  
-              if(await cart) {
-                let ids =   cart.product.findIndex(id => (id.productid == prid))
-                if(ids > -1){
-                  let productcart = await Cart.findOneAndUpdate(productfilter,{$inc:{"product.$.qty":1}},{new:true})
-                  res.status(200).json(productcart)
-                }else{
-                  const newcartproduct = Cart.findOneAndUpdate(filter,{$push:{product:{
-                    productid:prid,
-                    qty:qtyv,
-                    productprice:productprice,
-                    discount:discount,
-                    date:date          
-                  }}},{new:true})
-                  const cart = await newcartproduct
-                  res.status(200).json(cart)                              
-              }
+    try {
+      let cart = await Cart.findOne(filter)  
+          if(await cart) {
+            let ids = cart.product.findIndex(id => (id.productid == prid))
+            if(ids > -1){
+              let productcart = await Cart.findOneAndUpdate(productfilter,{$set:{"product.$.qty":qtyv}},{new:true})
+              res.status(200).json(productcart)
             }else{
-              const addproduct = new Cart({     
-                product:{
-                    productid:prid,
-                    qty:qtyv,
-                    productprice:productprice,
-                    discount:discount,
-                    date:date          
-                },
-                usersid:userid
-              })
-             const saveproduct = await addproduct.save()
-             res.status(200).json(saveproduct)
-            }   
-        } catch (error) {
-              res.json(new Error(res.status))
-        }  
+              const newcartproduct = Cart.findOneAndUpdate(filter,{$push:{product:{
+                productid:prid,
+                qty:qtyv,
+                productprice:productprice,
+                discount:discount,
+                date:date          
+              }}},{new:true})
+              const cart = await newcartproduct
+              res.status(200).json(cart)                              
+          }
+        }else{
+          const addproduct = new Cart({     
+            product:{
+                productid:prid,
+                qty:qtyv,
+                productprice:productprice,
+                discount:discount,
+                date:date          
+            },
+            usersid:userid
+          })
+          const saveproduct = await addproduct.save()
+          res.status(200).json(saveproduct)
+        }   
+    } catch (error) {
+          res.json(new Error(res.status))
+    }  
 }
-const displaycart = (req,res,next)=>{ 
+const displaycart = async (req,res,next)=>{ 
   const userid = mongoose.Types.ObjectId(req.user.id);
-  Cart.aggregate([
-    {$unwind:"$product"},    
-    {
-      $lookup:{
-          from:"products",
-          localField:"product.productid",
-          foreignField:"_id",
-          as:"product.proinfo"
-      }
-    },
-    {$match:{usersid:userid}},
-    {$unwind:"$product.proinfo"},
-      {
-        $group:{           
-          _id:userid,
-            Product:{$push:"$product"}
-        }
-      },
-      {
-        $project:{
+  try {
+      const cart = await Cart.aggregate([
+      {$unwind:"$product"},    
+      {$lookup:{
+        from:"products",
+        localField:"product.productid",
+        foreignField:"_id",
+        as:"product.proinfo"
+      }},
+      {$match:{usersid:userid}},
+      {$unwind:"$product.proinfo"},
+      {$group:{           
+        _id:userid,
+        Product:{$push:"$product"}
+      }},
+      {$project:{
           "usersid":1,
           "Product.qty":1,
           "Product.productid":1,
           "Product.productprice":1,
           "Product.discount":1, 
-          "Product.proinfo.productImage":1     
+          "Product.proinfo.productImage":1
         }
       }
-  ]).exec((err,cart)=>{
-      if (err) {
-        res.status(400).json({
-          message:err
-        })
-      } else {
-        res.status(200).json({
-            carts:cart
-        })        
-      }
-  })
+    ])
+    res.status(200).json(cart)
+  } catch (error) {
+    throw new Error(error)
+  }
 } 
+const removefromcart = async (req,res,next)=>{
+  console.log("removing....")
+  const userid = mongoose.Types.ObjectId(req.user.id)
+  const prid =  req.body.prid
+  const productfilter = {
+    usersid:userid,
+    product:{$elemMatch:{productid:mongoose.Types.ObjectId(prid)}}
+  }
+  try {
+    const removeproduct  = await Cart.findOneAndDelete(productfilter)
+    res.status(200).json(removeproduct)
+  } catch (error) {
+
+  }
+}
 const addaddress = async (req,res,next)=>{ 
     const delieveryaddress =  req.body.address;
     const city = req.body .city;
@@ -308,6 +315,18 @@ const orderproduct = async (req,res,next)=>{
       throw error
     }    
 }
+const cancelorder = async (req,res,next)=>{
+  const orderid = mongoose.Types.ObjectId(req.body.orderid);
+  try {
+    const findorder = await Order.findOne({_id:orderid})
+    if (findorder.status == "Ordered") {
+      const updatestatus = await Order.findOneAndUpdate({_id:orderid},{$set:{status:"Canceled"}},{new:true})
+      res.status(200).json(updatestatus)
+    }
+  } catch (error) {
+    
+  }
+}
 const displayorder = async (req,res,next)=>{
   const id = mongoose.Types.ObjectId(req.user.id);
   const addressid = mongoose.Types.ObjectId(req.body.addressid)
@@ -345,7 +364,8 @@ const displayorder = async (req,res,next)=>{
     throw new Error(error)
   }
   
-} 
+}
+ 
 module.exports = {
   getallproducts,
   viewproductdetail,
@@ -353,5 +373,7 @@ module.exports = {
   orderproduct,
   displayorder,
   displaycart,
+  cancelorder,
+  removefromcart,
   addaddress     
 }

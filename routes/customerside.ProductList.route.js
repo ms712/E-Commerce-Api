@@ -9,7 +9,8 @@ router.post("/orderproduct",checkAuth.checuserkAuth,product.orderproduct)
 router.post("/orderinfo",checkAuth.checuserkAuth,product.displayorder);
 router.post("/displaycart",checkAuth.checuserkAuth,product.displaycart);
 router.post("/deladdress",checkAuth.checuserkAuth,product.addaddress)
-
+router.post("/cancelorder",checkAuth.checuserkAuth,product.cancelorder)
+router.post("/removefromcart",checkAuth.checuserkAuth,product.removefromcart)
 
 
 
