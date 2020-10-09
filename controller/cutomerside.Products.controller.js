@@ -119,7 +119,7 @@ const addtocart = async (req,res,next)=>{
           if(await cart) {
             let ids = cart.product.findIndex(id => (id.productid == prid))
             if(ids > -1){
-              let productcart = await Cart.findOneAndUpdate(productfilter,{$set:{"product.$.qty":qtyv}},{new:true})
+              let productcart = await Cart.findOneAndUpdate(productfilter,{$inc:{"product.$.qty":1}},{new:true})
               res.status(200).json(productcart)
             }else{
               const newcartproduct = Cart.findOneAndUpdate(filter,{$push:{product:{
@@ -329,6 +329,7 @@ const cancelorder = async (req,res,next)=>{
 }
 const displayorder = async (req,res,next)=>{
   const id = mongoose.Types.ObjectId(req.user.id);
+  const proid = mongoose.Types.ObjectId(req.user.prid)
   const addressid = mongoose.Types.ObjectId(req.body.addressid)
   try{
     const order =  await Order.aggregate([
@@ -338,6 +339,7 @@ const displayorder = async (req,res,next)=>{
             let:{prid:"$product.productid",usersid:"$userid"},
             pipeline:[{$match:{$expr:{$and:[
               {$eq:["$$prid","$_id"]},
+              //{$eq:["$_id",proid]},
               {$eq:["$$usersid",id]}
             ]}}}
             ],                                                                                                                            
