@@ -61,7 +61,7 @@ const getallproducts = async (req,res,next)=>{
           let:{prcatid:"$productCatid",price:"$productPrice"},
           pipeline:[
             {$match:{$expr:{$and:[
-                  {$eq:["$$prcatid","$_id"]},
+                    {$eq:["$$prcatid","$_id"]},
           ]}}}],
           as:"catehory_info"
       }},
