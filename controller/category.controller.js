@@ -1,6 +1,6 @@
-const Category = require("../models/admin.AddProducts.model").Category;
+const Category = require("../models/admin.addProducts.model").Category;
 const mongoose = require("mongoose");
-const { Product } = require("../models/admin.AddProducts.model");
+const { Product } = require("../models/admin.addProducts.model");
 console.log("do....changes..")
 //1.Create Category:Done
 const createCategory = async (req,res,next)=>{ 

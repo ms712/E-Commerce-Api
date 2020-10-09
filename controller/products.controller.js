@@ -1,6 +1,6 @@
 var Promise = require("bluebird");
 Promise.promisifyAll(require("mongoose"))  
-const Product = require("../models/admin.AddProducts.model").Product;
+const Product = require("../models/admin.addProducts.model").Product;
 const mongoose = require("mongoose");
 
 //task 6:create products categoryise

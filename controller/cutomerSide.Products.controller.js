@@ -2,12 +2,12 @@ const { sortedLastIndexOf, sum, reject, result, find } = require("lodash");
 const mongoose = require("mongoose");
 var Promise = require("bluebird");
 Promise.promisifyAll(require("mongoose"));
-const Order = require("../models/admin.AddProducts.model").Order;
-const Cart = require("../models/admin.AddProducts.model").Cart;
-const Address = require("../models/admin.AddProducts.model").Address;
+const Order = require("../models/admin.addProducts.model").Order;
+const Cart = require("../models/admin.addProducts.model").Cart;
+const Address = require("../models/admin.addProducts.model").Address;
 const moment =  require("moment");
 
-const Product = require("../models/admin.AddProducts.model").Product;
+const Product = require("../models/admin.addProducts.model").Product;
 
 const getallproducts = async (req,res,next)=>{
   //for pagination
