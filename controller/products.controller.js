@@ -20,13 +20,17 @@ const addproduct = async (req, res, next) => {
         res.status(200).json(addedproduct)
       } 
     } catch (error) {
-      throw new Error(res.status)
+      throw new Error(error)
     }
 } 
 //task 7: Get Products Details with category Details
 const getproductdetails = (req,res,next)=>{
     const id = mongoose.Types.ObjectId(req.body.productid);
-    console.log("product details....")
+    try {
+      
+    } catch (error) {
+      
+    }
     Product.aggregate([
       { $match:{               
           _id:id
