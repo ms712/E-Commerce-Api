@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 var Promise = require("bluebird");
 Promise.promisifyAll(require("mongoose")); 
 const issuedtoken = require("../middleware/generateToken.Middleware");
-console.log("do..changes....")
+
 const register = async function(req,res){
     try {
        const foundUser =  await Users.findOne({email:req.body.email})

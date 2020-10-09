@@ -1,7 +1,7 @@
 const User  = require("../models/users.Admin.models");
 var Promise = require("bluebird");
 Promise.promisifyAll(require("mongoose"))
-console.log("do...changes....");
+
 const editprofile = async (req,res,next)=>{
     const options = {new:true}
     const filter = {email:req.user.email}

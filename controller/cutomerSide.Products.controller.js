@@ -107,7 +107,7 @@ const addtocart = async (req,res,next)=>{
   const prid  = req.body.productid;
   const productprice = req.body.productprice;
   const discount = req.body.discount ?  req.body.discount : 0;
-  console.log(prid);
+
   const productfilter = {
     usersid:userid,
     product:{$elemMatch:{productid:mongoose.Types.ObjectId(prid)}}
@@ -183,7 +183,7 @@ const displaycart = async (req,res,next)=>{
   }
 } 
 const removefromcart = async (req,res,next)=>{
-  console.log("removing....")
+ 
   const userid = mongoose.Types.ObjectId(req.user.id)
   const prid =  req.body.prid
   const productfilter = {
@@ -244,7 +244,7 @@ const orderproduct = async (req,res,next)=>{
   const product_price =  req.body.product_price;
   const addressid =  mongoose.Types.ObjectId(req.body.order_address_id)
   const id = mongoose.Types.ObjectId(req.user.id);
-  console.log("my id...",id)
+  
   const filter  = {
       usersid:id
     }
