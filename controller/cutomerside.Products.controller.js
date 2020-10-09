@@ -147,7 +147,7 @@ const addtocart = async (req,res,next)=>{
           res.status(200).json(saveproduct)
         }   
     } catch (error) {
-          res.json(new Error(res.status))
+          throw new Error(error)
     }  
 }
 const displaycart = async (req,res,next)=>{ 
@@ -194,7 +194,7 @@ const removefromcart = async (req,res,next)=>{
     const removeproduct  = await Cart.findOneAndDelete(productfilter)
     res.status(200).json(removeproduct)
   } catch (error) {
-
+    throw new Error(error)
   }
 }
 const addaddress = async (req,res,next)=>{ 
@@ -233,7 +233,7 @@ const addaddress = async (req,res,next)=>{
               res.status(200).json(response)
         }
     } catch (error) { 
-      res.json(new Error(res.status))
+      throw new Error(res.status)
     }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 }
 const orderproduct = async (req,res,next)=>{
@@ -324,7 +324,7 @@ const cancelorder = async (req,res,next)=>{
       res.status(200).json(updatestatus)
     }
   } catch (error) {
-    
+    throw new Error(res.status)
   }
 }
 const displayorder = async (req,res,next)=>{

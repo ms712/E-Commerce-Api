@@ -20,7 +20,7 @@ const addproduct = async (req, res, next) => {
         res.status(200).json(addedproduct)
       } 
     } catch (error) {
-      res.status(200).json(error)
+      throw new Error(res.status)
     }
 } 
 //task 7: Get Products Details with category Details
@@ -30,8 +30,7 @@ const getproductdetails = (req,res,next)=>{
     Product.aggregate([
       { $match:{               
           _id:id
-        }           
-      },
+        }},
       {$lookup:{
           from:"categories",
           let:{product_id:"$productCatid"},
@@ -40,16 +39,15 @@ const getproductdetails = (req,res,next)=>{
               $and:[
                 {$eq:["$$product_id","$_id"]}                           
               ]                 
-            }}}
-          ],
+            }}}],
           as:"product_with_cat"              
-          }},
-        {$unwind:"$product_with_cat"},
-          {$project:{
-            "productCategory":0,
-            "productCatid":0                   
-          }
+      }},
+      {$unwind:"$product_with_cat"},
+      {$project:{
+          "productCategory":0,
+          "productCatid":0                   
         }
+      }
     ]).exec((err,product)=>{
         if (err) {
             res.status(400).json({
