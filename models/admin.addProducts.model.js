@@ -63,6 +63,9 @@ const orderschema = mongoose.Schema({
     status:{
         type:String
     },
+    order_status:{
+        type:String
+    },
     payment_method:{
         type:String,
         default:"cod"
@@ -143,10 +146,7 @@ const addresSchema = mongoose.Schema({
     userid:{
         type:mongoose.ObjectId   
     }
-    
-
 })
-
 
 const Cart =  new mongoose.model("cart",cartschema)
 const Category =  new mongoose.model("category",categoryschema);

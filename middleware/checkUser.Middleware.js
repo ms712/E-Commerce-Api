@@ -7,9 +7,7 @@ const authHeader = req.headers.authorization;
 
     if(typeof req.headers.authorization !== "undefined") {
         const token = authHeader && authHeader.split(' ')[1].toString();
-   
     if(token ==  null) return res.sendStatus(401);
-
     jwt.verify(token,privatekey,function(err,verifying) {
         if(err) {
             res.status(401).json({
@@ -21,7 +19,6 @@ const authHeader = req.headers.authorization;
             if(req.user.isAdmin == false){
                 next();
             }
-         
         } else {        
             res.status(401).json({
                 message:"Unauthorized"

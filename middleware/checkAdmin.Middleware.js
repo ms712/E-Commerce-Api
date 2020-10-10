@@ -4,7 +4,6 @@ const checkAuth = (req,res,next)=>{
     
 const privatekey = process.env.PRIVATE_KEY       
 const authHeader = req.headers.authorization; 
-
     if(typeof req.headers.authorization !== "undefined") {
         const token = authHeader && authHeader.split(' ')[1].toString();
    

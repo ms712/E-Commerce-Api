@@ -18,8 +18,7 @@ const userschema = mongoose.Schema({
     },
     profileImage:{
      type:String,
-     }
-    ,
+     },
     address:{
       type:String,
     },

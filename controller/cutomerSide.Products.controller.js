@@ -6,7 +6,6 @@ const Order = require("../models/admin.addProducts.model").Order;
 const Cart = require("../models/admin.addProducts.model").Cart;
 const Address = require("../models/admin.addProducts.model").Address;
 const moment =  require("moment");
-
 const Product = require("../models/admin.addProducts.model").Product;
 
 const getallproducts = async (req,res,next)=>{
@@ -279,7 +278,8 @@ const orderproduct = async (req,res,next)=>{
               orderdate:orderdate,
               subtotal: product(),
               discount: discountprice,
-              totalamountpay:totalpay
+              totalamountpay:totalpay,
+              order_status:"Active"
           })
           const orders = await order.save();
           if (await orders) {
@@ -303,7 +303,8 @@ const orderproduct = async (req,res,next)=>{
                 status:"Ordered",
                 order_address_id:addressid,
                 expecteddelievery:delievery,
-                orderdate:orderdate
+                orderdate:orderdate,
+                order_status:"Active"
               })
               const saveorder = await order.save()
               res.status(200).json(saveorder)
@@ -320,7 +321,7 @@ const cancelorder = async (req,res,next)=>{
   try {
     const findorder = await Order.findOne({_id:orderid})
     if (findorder.status == "Ordered") {
-      const updatestatus = await Order.findOneAndUpdate({_id:orderid},{$set:{status:"Canceled"}},{new:true})
+      const updatestatus = await Order.findOneAndUpdate({_id:orderid},{$set:{status:"Canceled",order_status:"DeActivated"}},{new:true})
       res.status(200).json(updatestatus)
     }
   } catch (error) {
@@ -329,17 +330,18 @@ const cancelorder = async (req,res,next)=>{
 }
 const displayorder = async (req,res,next)=>{
   const id = mongoose.Types.ObjectId(req.user.id);
-  const proid = mongoose.Types.ObjectId(req.user.prid)
+  const proid = mongoose.Types.ObjectId(req.body.productid)
   const addressid = mongoose.Types.ObjectId(req.body.addressid)
   try{
     const order =  await Order.aggregate([
         {$unwind:"$product"},
         {$lookup:{                                                                                                            
              from:"products",
-            let:{prid:"$product.productid",usersid:"$userid"},
+            let:{prid:"$product.productid",status:"$order_status",usersid:"$userid"},
             pipeline:[{$match:{$expr:{$and:[
               {$eq:["$$prid","$_id"]},
-              //{$eq:["$_id",proid]},
+              {$eq:["$$status","Active"]},
+              {$eq:["$$prid",proid]},
               {$eq:["$$usersid",id]}
             ]}}}
             ],                                                                                                                            
