@@ -98,52 +98,42 @@ const removeproduct = async (req, res, next) => {
   }
 }
 //task 10:list all products with category 
-const productlist = (req, res, next)=>{
+const productlist = async (req, res, next)=>{
     const productname =  req.body.productName ? req.body.productName : "";
     const pagination = req.body.pagination ? parseInt(req.body.pagination) : 3
     const page = req.body.pageno ? req.body.pageno : 1;
-    const id = mongoose.Types.ObjectId(req.body.catid); 
-    Product.aggregate([
-      {$match:{
-        "productCatid":{
-          $eq:id
-        }   
-       },      
-      },
-    {
-      $lookup:{
-          from:"categories",
-          let:{"product_id":"$productCatid"},
-          pipeline:[{$match:{$expr:{                               
-                $and:[
-                  {$eq:["$$product_id","$_id"]},                    
-                ]
-              } 
-            }}
-          ],
+    const id = mongoose.Types.ObjectId(req.body.catid);
+    try {
+     const product =  await Product.aggregate([
+        {$match:{
+          "productCatid":{
+            $eq:id
+        }},},
+      {$lookup:{
+        from:"categories",
+        let:{"product_id":"$productCatid"},
+        pipeline:[
+          {$match:{
+            $expr:{                               
+              $and:[
+               {$eq:["$$product_id","$_id"]},                    
+              ]} 
+          }}],
           as:"all_products"   
         }},
         {$unwind:"$all_products"},
-        {
-          $project:{
-              "productCatid":0,
-              "productCategory":0
-          }
-        },
+        {$project:{
+           "productCatid":0,
+           "productCategory":0
+        }},
         {$skip:((page - 1) * pagination)},
-        {$limit:pagination}
-          
-]).exec((err,product)=>{
-        if (err) {
-          res.json({
-            message:err
-          })
-        } else {
-          res.status(200).json({
-              products:product
-          })         
-        }
-    })
+        {$limit:pagination}  
+     ])
+      res.status(200).json(product)
+    } catch (error) {
+      throw new Error(error)
+    } 
+
 }
 module.exports = {
   addproduct,

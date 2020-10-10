@@ -6,8 +6,8 @@ router.get("/getallproductsApi",product.getallproducts);
 router.get("/viewProduct",product.viewproductdetail);
 router.post("/addtocart",checkAuth.checuserkAuth,product.addtocart)
 router.post("/orderproduct",checkAuth.checuserkAuth,product.orderproduct)
-router.post("/orderinfo",checkAuth.checuserkAuth,product.displayorder);
-router.post("/displaycart",checkAuth.checuserkAuth,product.displaycart);
+router.get("/orderinfo",checkAuth.checuserkAuth,product.displayorder);
+router.get("/displaycart",checkAuth.checuserkAuth,product.displaycart);
 router.post("/deladdress",checkAuth.checuserkAuth,product.addaddress)
 router.post("/cancelorder",checkAuth.checuserkAuth,product.cancelorder)
 router.post("/removefromcart",checkAuth.checuserkAuth,product.removefromcart)
